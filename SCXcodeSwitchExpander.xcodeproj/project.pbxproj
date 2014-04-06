@@ -1,0 +1,333 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		1821147F18DDABF8005F1C26 /* IDEKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1821147E18DDABF8005F1C26 /* IDEKit.framework */; };
+		1830652818D268E50001DC8E /* DVTFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1830652718D268E50001DC8E /* DVTFoundation.framework */; };
+		1830652A18D268FE0001DC8E /* DVTKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1830652918D268FE0001DC8E /* DVTKit.framework */; };
+		18990B3618D2529C007A8756 /* SCXcodeSwitchExpander.m in Sources */ = {isa = PBXBuildFile; fileRef = 18990B3518D2529C007A8756 /* SCXcodeSwitchExpander.m */; };
+		18A1B48118DDA742007CA06A /* IDEFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 18A1B48018DDA742007CA06A /* IDEFoundation.framework */; };
+		18ECEB5718D267A0005F6C59 /* DVTTextCompletionController+SCXcodeSwitchExpander.m in Sources */ = {isa = PBXBuildFile; fileRef = 18ECEB5618D267A0005F6C59 /* DVTTextCompletionController+SCXcodeSwitchExpander.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		18142E1E18E89497006BD329 /* DVTCompletingTextView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DVTCompletingTextView.h; sourceTree = "<group>"; };
+		18142E1F18E89497006BD329 /* DVTSourceCodeSymbolKind.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DVTSourceCodeSymbolKind.h; sourceTree = "<group>"; };
+		18142E2018E89497006BD329 /* DVTSourceTextView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DVTSourceTextView.h; sourceTree = "<group>"; };
+		18142E2118E89497006BD329 /* DVTTextCompletionController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DVTTextCompletionController.h; sourceTree = "<group>"; };
+		18142E2218E89497006BD329 /* DVTTextCompletionListWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DVTTextCompletionListWindowController.h; sourceTree = "<group>"; };
+		18142E2318E89497006BD329 /* DVTTextCompletionSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DVTTextCompletionSession.h; sourceTree = "<group>"; };
+		18142E2418E89497006BD329 /* IDEIndex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDEIndex.h; sourceTree = "<group>"; };
+		18142E2518E89497006BD329 /* IDEIndexCollection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDEIndexCollection.h; sourceTree = "<group>"; };
+		18142E2618E89497006BD329 /* IDEIndexCompletionItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDEIndexCompletionItem.h; sourceTree = "<group>"; };
+		18142E2718E89497006BD329 /* IDEIndexContainerSymbol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDEIndexContainerSymbol.h; sourceTree = "<group>"; };
+		18142E2818E89497006BD329 /* IDEIndexSymbol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDEIndexSymbol.h; sourceTree = "<group>"; };
+		1821147E18DDABF8005F1C26 /* IDEKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IDEKit.framework; path = ../../../../Applications/Xcode.app/Contents/Frameworks/IDEKit.framework; sourceTree = "<group>"; };
+		1830652718D268E50001DC8E /* DVTFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DVTFoundation.framework; path = ../../../../Applications/Xcode.app/Contents/SharedFrameworks/DVTFoundation.framework; sourceTree = "<group>"; };
+		1830652918D268FE0001DC8E /* DVTKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DVTKit.framework; path = ../../../../Applications/Xcode.app/Contents/SharedFrameworks/DVTKit.framework; sourceTree = "<group>"; };
+		18990B1F18D25239007A8756 /* SCXcodeSwitchExpander.xcplugin */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SCXcodeSwitchExpander.xcplugin; sourceTree = BUILT_PRODUCTS_DIR; };
+		18990B2A18D25239007A8756 /* SCXcodeSwitchExpander-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "SCXcodeSwitchExpander-Info.plist"; sourceTree = "<group>"; };
+		18990B2E18D25239007A8756 /* SCXcodeSwitchExpander-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "SCXcodeSwitchExpander-Prefix.pch"; sourceTree = "<group>"; };
+		18990B3418D2529C007A8756 /* SCXcodeSwitchExpander.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SCXcodeSwitchExpander.h; sourceTree = "<group>"; };
+		18990B3518D2529C007A8756 /* SCXcodeSwitchExpander.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SCXcodeSwitchExpander.m; sourceTree = "<group>"; };
+		18A1B48018DDA742007CA06A /* IDEFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IDEFoundation.framework; path = ../../../../Applications/Xcode.app/Contents/Frameworks/IDEFoundation.framework; sourceTree = "<group>"; };
+		18ECEB5518D267A0005F6C59 /* DVTTextCompletionController+SCXcodeSwitchExpander.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "DVTTextCompletionController+SCXcodeSwitchExpander.h"; sourceTree = "<group>"; };
+		18ECEB5618D267A0005F6C59 /* DVTTextCompletionController+SCXcodeSwitchExpander.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "DVTTextCompletionController+SCXcodeSwitchExpander.m"; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		18990B1C18D25239007A8756 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				18A1B48118DDA742007CA06A /* IDEFoundation.framework in Frameworks */,
+				1830652A18D268FE0001DC8E /* DVTKit.framework in Frameworks */,
+				1821147F18DDABF8005F1C26 /* IDEKit.framework in Frameworks */,
+				1830652818D268E50001DC8E /* DVTFoundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		18142E1D18E89497006BD329 /* Xcode Headers */ = {
+			isa = PBXGroup;
+			children = (
+				18142E1E18E89497006BD329 /* DVTCompletingTextView.h */,
+				18142E1F18E89497006BD329 /* DVTSourceCodeSymbolKind.h */,
+				18142E2018E89497006BD329 /* DVTSourceTextView.h */,
+				18142E2118E89497006BD329 /* DVTTextCompletionController.h */,
+				18142E2218E89497006BD329 /* DVTTextCompletionListWindowController.h */,
+				18142E2318E89497006BD329 /* DVTTextCompletionSession.h */,
+				18142E2418E89497006BD329 /* IDEIndex.h */,
+				18142E2518E89497006BD329 /* IDEIndexCollection.h */,
+				18142E2618E89497006BD329 /* IDEIndexCompletionItem.h */,
+				18142E2718E89497006BD329 /* IDEIndexContainerSymbol.h */,
+				18142E2818E89497006BD329 /* IDEIndexSymbol.h */,
+			);
+			path = "Xcode Headers";
+			sourceTree = "<group>";
+		};
+		18990B1618D25239007A8756 = {
+			isa = PBXGroup;
+			children = (
+				18990B2818D25239007A8756 /* SCXcodeSwitchExpander */,
+				18990B2118D25239007A8756 /* Frameworks */,
+				18990B2018D25239007A8756 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		18990B2018D25239007A8756 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				18990B1F18D25239007A8756 /* SCXcodeSwitchExpander.xcplugin */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		18990B2118D25239007A8756 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				1830652718D268E50001DC8E /* DVTFoundation.framework */,
+				1830652918D268FE0001DC8E /* DVTKit.framework */,
+				18A1B48018DDA742007CA06A /* IDEFoundation.framework */,
+				1821147E18DDABF8005F1C26 /* IDEKit.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		18990B2818D25239007A8756 /* SCXcodeSwitchExpander */ = {
+			isa = PBXGroup;
+			children = (
+				18990B3418D2529C007A8756 /* SCXcodeSwitchExpander.h */,
+				18990B3518D2529C007A8756 /* SCXcodeSwitchExpander.m */,
+				18ECEB5518D267A0005F6C59 /* DVTTextCompletionController+SCXcodeSwitchExpander.h */,
+				18ECEB5618D267A0005F6C59 /* DVTTextCompletionController+SCXcodeSwitchExpander.m */,
+				18142E1D18E89497006BD329 /* Xcode Headers */,
+				18990B2918D25239007A8756 /* Supporting Files */,
+			);
+			path = SCXcodeSwitchExpander;
+			sourceTree = "<group>";
+		};
+		18990B2918D25239007A8756 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				18990B2A18D25239007A8756 /* SCXcodeSwitchExpander-Info.plist */,
+				18990B2E18D25239007A8756 /* SCXcodeSwitchExpander-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		18990B1E18D25239007A8756 /* SCXcodeSwitchExpander */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 18990B3118D25239007A8756 /* Build configuration list for PBXNativeTarget "SCXcodeSwitchExpander" */;
+			buildPhases = (
+				18990B1B18D25239007A8756 /* Sources */,
+				18990B1C18D25239007A8756 /* Frameworks */,
+				18990B1D18D25239007A8756 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = SCXcodeSwitchExpander;
+			productName = SCXcodeSwitchExpander;
+			productReference = 18990B1F18D25239007A8756 /* SCXcodeSwitchExpander.xcplugin */;
+			productType = "com.apple.product-type.bundle";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		18990B1718D25239007A8756 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0510;
+				ORGANIZATIONNAME = "Stefan Ceriu";
+			};
+			buildConfigurationList = 18990B1A18D25239007A8756 /* Build configuration list for PBXProject "SCXcodeSwitchExpander" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 18990B1618D25239007A8756;
+			productRefGroup = 18990B2018D25239007A8756 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				18990B1E18D25239007A8756 /* SCXcodeSwitchExpander */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		18990B1D18D25239007A8756 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		18990B1B18D25239007A8756 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				18ECEB5718D267A0005F6C59 /* DVTTextCompletionController+SCXcodeSwitchExpander.m in Sources */,
+				18990B3618D2529C007A8756 /* SCXcodeSwitchExpander.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		18990B2F18D25239007A8756 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		18990B3018D25239007A8756 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		18990B3218D25239007A8756 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				DEPLOYMENT_LOCATION = YES;
+				DSTROOT = "$(HOME)";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SYSTEM_APPS_DIR)/Xcode.app/Contents/SharedFrameworks",
+					"$(SYSTEM_APPS_DIR)/Xcode.app/Contents/Frameworks",
+					"$(PROJECT_DIR)",
+					"$(SYSTEM_APPS_DIR)/Xcode.app/Contents/OtherFrameworks",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "SCXcodeSwitchExpander/SCXcodeSwitchExpander-Prefix.pch";
+				INFOPLIST_FILE = "SCXcodeSwitchExpander/SCXcodeSwitchExpander-Info.plist";
+				INSTALL_PATH = "/Library/Application Support/Developer/Shared/Xcode/Plug-ins";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = xcplugin;
+			};
+			name = Debug;
+		};
+		18990B3318D25239007A8756 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				DEPLOYMENT_LOCATION = YES;
+				DSTROOT = "$(HOME)";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SYSTEM_APPS_DIR)/Xcode.app/Contents/SharedFrameworks",
+					"$(SYSTEM_APPS_DIR)/Xcode.app/Contents/Frameworks",
+					"$(PROJECT_DIR)",
+					"$(SYSTEM_APPS_DIR)/Xcode.app/Contents/OtherFrameworks",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "SCXcodeSwitchExpander/SCXcodeSwitchExpander-Prefix.pch";
+				INFOPLIST_FILE = "SCXcodeSwitchExpander/SCXcodeSwitchExpander-Info.plist";
+				INSTALL_PATH = "/Library/Application Support/Developer/Shared/Xcode/Plug-ins";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = xcplugin;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		18990B1A18D25239007A8756 /* Build configuration list for PBXProject "SCXcodeSwitchExpander" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				18990B2F18D25239007A8756 /* Debug */,
+				18990B3018D25239007A8756 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		18990B3118D25239007A8756 /* Build configuration list for PBXNativeTarget "SCXcodeSwitchExpander" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				18990B3218D25239007A8756 /* Debug */,
+				18990B3318D25239007A8756 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 18990B1718D25239007A8756 /* Project object */;
+}
