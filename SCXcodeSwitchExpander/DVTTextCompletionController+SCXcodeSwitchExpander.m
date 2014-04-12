@@ -82,7 +82,7 @@
             }
             
             // See if the current line has a switch statement
-            NSRange switchRange = [textView.string rangeOfString:@"\\s+switch\\s+" options:NSRegularExpressionSearch range:NSMakeRange(newLineRange.location, self.session.wordStartLocation - newLineRange.location)];
+            NSRange switchRange = [textView.string rangeOfString:@"\\s+switch\\s*\\\(" options:NSRegularExpressionSearch range:NSMakeRange(newLineRange.location, self.session.wordStartLocation - newLineRange.location)];
             if(switchRange.location == NSNotFound) {
                 return;
             }
