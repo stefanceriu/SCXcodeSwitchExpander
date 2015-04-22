@@ -24,7 +24,7 @@
 
 @interface DVTTextCompletionListWindowController (SCXcodeSwitchExpander)
 
-- (void)tryExpandingSwitchStatement;
+- (BOOL)tryExpandingSwitchStatement;
 
 @end
 
@@ -42,20 +42,23 @@
 
 - (BOOL)scSwizzledAcceptCurrentCompletion
 {
-    [self.currentSession.listWindowController tryExpandingSwitchStatement];
-    return [self scSwizzledAcceptCurrentCompletion];
+	if([self.currentSession.listWindowController tryExpandingSwitchStatement]) {
+		return YES;
+	}
+	
+	return [self scSwizzledAcceptCurrentCompletion];
 }
 
 @end
 
 @implementation DVTTextCompletionListWindowController (SCXcodeSwitchExpander)
 
-- (void)tryExpandingSwitchStatement
+- (BOOL)tryExpandingSwitchStatement
 {
     IDEIndex *index = [[SCXcodeSwitchExpander sharedSwitchExpander] index];
     
     if(index == nil) {
-        return;
+        return NO;
     }
     
     IDEIndexCompletionItem *item = [self _selectedCompletionItem];
@@ -72,70 +75,98 @@
             
             DVTSourceTextView *textView = (DVTSourceTextView *)self.session.textView;
             if(self.session.wordStartLocation == NSNotFound) {
-                return;
+                return NO;
             }
             
             // Fetch the previous new line
             NSRange newLineRange = [textView.string rangeOfString:@"\n" options:NSBackwardsSearch range:NSMakeRange(0, self.session.wordStartLocation)];
             if(newLineRange.location == NSNotFound) {
-                return;
+                return NO;
             }
             
             // See if the current line has a switch statement
             NSRange switchRange = [textView.string rangeOfString:@"\\s+switch\\s*\\\(" options:NSRegularExpressionSearch range:NSMakeRange(newLineRange.location, self.session.wordStartLocation - newLineRange.location)];
             if(switchRange.location == NSNotFound) {
-                return;
+                return NO;
             }
-            
-            // Insert the selected autocomplete item
-            [self.session insertCurrentCompletion];
-            
+			
             // Fetch the opening bracket for that switch statement
-            NSRange openingBracketRange = [textView.string rangeOfString:@"{" options:0 range:NSMakeRange(self.session.wordStartLocation, textView.string.length - self.session.wordStartLocation)];
-            if(openingBracketRange.location == NSNotFound) {
-                return;
+            NSUInteger openingBracketLocation = [textView.string rangeOfString:@"{" options:0 range:NSMakeRange(self.session.wordStartLocation, textView.string.length - self.session.wordStartLocation)].location;
+			if(openingBracketLocation == NSNotFound) {
+                return NO;
             }
-            
+			
+			// Insert the selected autocomplete item
+			[self.session insertCurrentCompletion];
+			
+			NSRange selectedRange = textView.selectedRange;
+			
             // Fetch the closing bracket for that switch statement
-            NSUInteger closingBracketLocation = [self matchingBracketLocationForOpeningBracketLocation:openingBracketRange.location inString:self.session.textView.string];
+			NSUInteger closingBracketLocation = [self matchingBracketLocationForOpeningBracketLocation:openingBracketLocation
+																							  inString:textView.string];
             if(closingBracketLocation == NSNotFound) {
-                return;
+                return NO;
             }
-            
-            NSString *switchStatementContents = [self.session.textView.string substringWithRange:NSMakeRange(openingBracketRange.location, closingBracketLocation - openingBracketRange.location)];
-            
+			
             // Get rid of the default autocompletion if necessary
-            NSRange defaultAutocompletionRange = [self.session.textView.string rangeOfString:@"\\s*case <#constant#>:\\s*<#statements#>\\s*break;" options:NSRegularExpressionSearch];
-            
+            NSRange defaultAutocompletionRange = [textView.string rangeOfString:@"\\s*case <#constant#>:\\s*<#statements#>\\s*break;\\s*default:\\s*break;\\s*" options:NSRegularExpressionSearch range:NSMakeRange(openingBracketLocation, closingBracketLocation - openingBracketLocation)];
             if(defaultAutocompletionRange.location != NSNotFound) {
-                // remove it from the switch
                 [textView insertText:@"" replacementRange:defaultAutocompletionRange];
+				closingBracketLocation -= defaultAutocompletionRange.length;
             }
-            
-            // Generate the items to insert
+			
+			NSRange switchContentRange = NSMakeRange(openingBracketLocation + 1, closingBracketLocation - openingBracketLocation - 1);
+			NSString *switchContent = [textView.string substringWithRange:switchContentRange];
+			
+            // Generate the items to insert and insert them at the end
             NSMutableString *replacementString = [NSMutableString string];
+			
+			if([switchContent stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]].length == 0) {
+				[replacementString appendString:@"\n"];
+			}
+			
             for(IDEIndexSymbol *child in [((IDEIndexContainerSymbol*)symbol).children allObjects]) {
-                
-                if([switchStatementContents rangeOfString:child.displayName].location == NSNotFound)
-                {
-                    [replacementString appendString:[NSString stringWithFormat:@"\ncase %@:\n<#statement#>\nbreak;", child.displayName]];
+                if([switchContent rangeOfString:child.displayName].location == NSNotFound) {
+                    [replacementString appendString:[NSString stringWithFormat:@"case %@: {\n<#statement#>\nbreak;\n}\n", child.displayName]];
                 }
             }
-        
-            // Insert the generated items
-            [textView insertText:replacementString replacementRange:NSMakeRange(openingBracketRange.location + 1, 1)];
-            
+			
+            [textView insertText:replacementString replacementRange:NSMakeRange(switchContentRange.location + switchContentRange.length, 0)];
+			
+			closingBracketLocation += replacementString.length;
+			switchContentRange = NSMakeRange(openingBracketLocation + 1, closingBracketLocation - openingBracketLocation - 1);
+			switchContent = [textView.string substringWithRange:switchContentRange];
+			
+			// Insert the default case if necessary
+			if([switchContent rangeOfString:@"default"].location == NSNotFound) {
+				replacementString = [NSMutableString stringWithString:@"default: {\nbreak;\n}\n"];
+				[textView insertText:replacementString replacementRange:NSMakeRange(switchContentRange.location + switchContentRange.length, 0)];
+				closingBracketLocation += replacementString.length;
+			}
+			
             // Re-indent everything
-            [textView _indentInsertedTextIfNecessaryAtRange:NSMakeRange(openingBracketRange.location + 1, replacementString.length)];
+			NSRange reindentRange = NSMakeRange(openingBracketLocation, closingBracketLocation - openingBracketLocation + 2);
+            [textView _indentInsertedTextIfNecessaryAtRange:reindentRange];
+			
+			// Preserve the selected range
+			[textView setSelectedRange:selectedRange];
+			
+			return YES;
         }
         
         break;
     }
+	
+	return NO;
 }
 
 - (NSUInteger)matchingBracketLocationForOpeningBracketLocation:(NSUInteger)location inString:(NSString *)string
 {
-    const char *cString = [self.session.textView.string cStringUsingEncoding:NSUTF8StringEncoding];
+	if(string.length == 0) {
+		return NSNotFound;
+	}
+	
+    const char *cString = [string cStringUsingEncoding:NSUTF8StringEncoding];
     
     NSInteger matchingLocation = location;
     NSInteger counter = 1;
