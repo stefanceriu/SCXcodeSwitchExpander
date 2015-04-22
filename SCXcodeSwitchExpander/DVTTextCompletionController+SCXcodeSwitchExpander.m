@@ -165,8 +165,6 @@
 	if(string.length == 0) {
 		return NSNotFound;
 	}
-	
-    const char *cString = [string cStringUsingEncoding:NSUTF8StringEncoding];
     
     NSInteger matchingLocation = location;
     NSInteger counter = 1;
@@ -177,12 +175,12 @@
             return NSNotFound;
         }
         
-        char character = cString[matchingLocation];
+        NSString *character = [string substringWithRange:NSMakeRange(matchingLocation, 1)];
         
-        if (character == '{') {
+		if ([character isEqualToString:@"{"]) {
             counter++;
         }
-        else if (character == '}') {
+        else if ([character isEqualToString:@"}"]) {
             counter--;
         }
     }
