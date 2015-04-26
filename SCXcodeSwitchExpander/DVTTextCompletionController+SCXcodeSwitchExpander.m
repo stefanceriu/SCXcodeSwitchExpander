@@ -64,8 +64,9 @@
     IDEIndexCompletionItem *item = [self _selectedCompletionItem];
     
     // Fetch all symbols matching the autocomplete item type
-    IDEIndexCollection *collection = [index allSymbolsMatchingName:item.displayType kind:nil];
-    
+	NSString *symbolName = (item.displayType.length ? item.displayType : item.displayText);
+	IDEIndexCollection *collection = [index allSymbolsMatchingName:symbolName kind:nil];
+	
     // Find the first one of them that is a container
     for(IDEIndexSymbol *symbol in collection.allObjects) {
         
