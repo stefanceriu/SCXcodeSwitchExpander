@@ -65,6 +65,9 @@
     
     // Fetch all symbols matching the autocomplete item type
 	NSString *symbolName = (item.displayType.length ? item.displayType : item.displayText);
+	symbolName = [[symbolName componentsSeparatedByString:@"::"] lastObject]; // Remove C++ namespaces
+	symbolName = [[symbolName componentsSeparatedByCharactersInSet:[NSCharacterSet whitespaceCharacterSet]] lastObject]; // Remove enum keyword
+
 	IDEIndexCollection *collection = [index allSymbolsMatchingName:symbolName kind:nil];
 	
     // Find the first one of them that is a container

@@ -30,7 +30,7 @@ SCXcodeSwitchExpander is a small Xcode plugin that expands switch statements by 
 
 - takes a bit for it to kick in after starting Xcode as it's waiting for the IDEIndexDidChange notification. I found that building the project usually makes that happen.
 
-- only works with NS_ENUM but keeps default Xcode behavior for old style enums
+- does not work with anonymous enums
 
 ### Installation
 
