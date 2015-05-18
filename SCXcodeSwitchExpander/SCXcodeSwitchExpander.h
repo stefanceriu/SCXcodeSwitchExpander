@@ -13,5 +13,6 @@
 + (instancetype)sharedSwitchExpander;
 
 @property (nonatomic, weak, readonly) IDEIndex *index;
+@property (nonatomic, assign) BOOL isSwift;
 
 @end
