@@ -74,6 +74,15 @@
     for(IDEIndexSymbol *symbol in collection.allObjects) {
         
         DVTSourceCodeSymbolKind *symbolKind = symbol.symbolKind;
+		
+        BOOL isSymbolKindEnum = NO;
+        for(DVTSourceCodeSymbolKind  *conformingSymbol in symbolKind.allConformingSymbolKinds) {
+            isSymbolKindEnum = [self isSymbolKindEnum:conformingSymbol];
+        }
+        
+        if (!isSymbolKindEnum) {
+			return NO;
+        }
         
         if(symbolKind.isContainer) {
             
@@ -112,8 +121,14 @@
                 return NO;
             }
 			
+            NSRange defaultAutocompletionRange;
             // Get rid of the default autocompletion if necessary
-            NSRange defaultAutocompletionRange = [textView.string rangeOfString:@"\\s*case <#constant#>:\\s*<#statements#>\\s*break;\\s*default:\\s*break;\\s*" options:NSRegularExpressionSearch range:NSMakeRange(openingBracketLocation, closingBracketLocation - openingBracketLocation)];
+            if ([[SCXcodeSwitchExpander sharedSwitchExpander] isSwift]) {
+                defaultAutocompletionRange = [textView.string rangeOfString:@"\\s*case .<#constant#>:\\s*<#statements#>\\s*break\\s*default:\\s*break\\s*" options:NSRegularExpressionSearch range:NSMakeRange(openingBracketLocation, closingBracketLocation - openingBracketLocation)];
+            } else {
+                defaultAutocompletionRange = [textView.string rangeOfString:@"\\s*case <#constant#>:\\s*<#statements#>\\s*break;\\s*default:\\s*break;\\s*" options:NSRegularExpressionSearch range:NSMakeRange(openingBracketLocation, closingBracketLocation - openingBracketLocation)];
+            }
+			
             if(defaultAutocompletionRange.location != NSNotFound) {
                 [textView insertText:@"" replacementRange:defaultAutocompletionRange];
 				closingBracketLocation -= defaultAutocompletionRange.length;
@@ -131,7 +146,12 @@
 			
             for(IDEIndexSymbol *child in [((IDEIndexContainerSymbol*)symbol).children allObjects]) {
                 if([switchContent rangeOfString:child.displayName].location == NSNotFound) {
-                    [replacementString appendString:[NSString stringWithFormat:@"case %@: {\n<#statement#>\nbreak;\n}\n", child.displayName]];
+                    if ([[SCXcodeSwitchExpander sharedSwitchExpander] isSwift]) {
+                        NSString *childDisplayName = [self correctEnumConstantIfFromCocoa:[NSString stringWithFormat:@"%@",symbol] symbolName:symbolName cocoaEnumName:child.displayName];
+                        [replacementString appendString:[NSString stringWithFormat:@"case .%@: \n<#statement#>\nbreak\n\n", childDisplayName]];
+                    } else {
+                        [replacementString appendString:[NSString stringWithFormat:@"case %@: {\n<#statement#>\nbreak;\n}\n", child.displayName]];
+                    }
                 }
             }
 			
@@ -141,13 +161,16 @@
 			switchContentRange = NSMakeRange(openingBracketLocation + 1, closingBracketLocation - openingBracketLocation - 1);
 			switchContent = [textView.string substringWithRange:switchContentRange];
 			
-			// Insert the default case if necessary
-			if([switchContent rangeOfString:@"default"].location == NSNotFound) {
-				replacementString = [NSMutableString stringWithString:@"default: {\nbreak;\n}\n"];
-				[textView insertText:replacementString replacementRange:NSMakeRange(switchContentRange.location + switchContentRange.length, 0)];
-				closingBracketLocation += replacementString.length;
-			}
-			
+            // Insert the default case if necessary
+            if([switchContent rangeOfString:@"default"].location == NSNotFound) {
+                if ([[SCXcodeSwitchExpander sharedSwitchExpander] isSwift]) {
+                    replacementString = [NSMutableString stringWithString:@"default: \nbreak\n\n"];
+                } else {
+                    replacementString = [NSMutableString stringWithString:@"default: {\nbreak;\n}\n"];
+                }
+                [textView insertText:replacementString replacementRange:NSMakeRange(switchContentRange.location + switchContentRange.length, 0)];
+                closingBracketLocation += replacementString.length;
+            }
             // Re-indent everything
 			NSRange reindentRange = NSMakeRange(openingBracketLocation, closingBracketLocation - openingBracketLocation + 2);
             [textView _indentInsertedTextIfNecessaryAtRange:reindentRange];
@@ -162,6 +185,20 @@
     }
 	
 	return NO;
+}
+
+- (NSString *)correctEnumConstantIfFromCocoa:(NSString *)symbol symbolName:(NSString *)symbolName cocoaEnumName:(NSString *)enumName
+{
+	if ([symbol rangeOfString:@"c:@E@"].location != NSNotFound) {
+		return [enumName stringByReplacingOccurrencesOfString:symbolName withString:@""];
+	}
+	
+	return enumName;
+}
+
+- (BOOL)isSymbolKindEnum:(DVTSourceCodeSymbolKind *)symbol
+{
+	return [symbol.identifier isEqualToString:@"Xcode.SourceCodeSymbolKind.Enum"];
 }
 
 - (NSUInteger)matchingBracketLocationForOpeningBracketLocation:(NSUInteger)location inString:(NSString *)string

@@ -6,9 +6,12 @@
 //  Copyright (c) 2014 Stefan Ceriu. All rights reserved.
 //
 
-@interface DVTSourceCodeSymbolKind : NSObject
+@class NSArray, NSString;
 
+@interface DVTSourceCodeSymbolKind : NSObject <NSCopying>
+
+@property(readonly) NSString *identifier;
 @property(readonly, getter=isContainer) BOOL container;
+@property(readonly) NSArray *allConformingSymbolKinds;
 
 @end
-
