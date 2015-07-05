@@ -26,16 +26,17 @@ static SCXcodeSwitchExpander *sharedExpander = nil;
 
 + (void)pluginDidLoad:(NSBundle *)plugin
 {
-	[self sharedSwitchExpander];
+	BOOL isApplicationXcode = [[[NSBundle mainBundle] infoDictionary][@"CFBundleName"] isEqual:@"Xcode"];
+	if (isApplicationXcode) {
+		static dispatch_once_t onceToken;
+		dispatch_once(&onceToken, ^{
+			sharedExpander = [[self alloc] init];
+		});
+	}
 }
 
 + (instancetype)sharedSwitchExpander
 {
-	static dispatch_once_t onceToken;
-	dispatch_once(&onceToken, ^{
-		sharedExpander = [[self alloc] init];
-	});
-	
 	return sharedExpander;
 }
 
@@ -55,12 +56,7 @@ static SCXcodeSwitchExpander *sharedExpander = nil;
 	IDEFileTextSettings *fileSettings = editor.fileTextSettings;
 	IDEFileReference *fileReference = fileSettings.fileReference;
 	
-	/*
-	 Since I've got this on Console:<Xcode3FileReference, 0x7fcde7977580 (Represents: <PBXFileReference:0x7fcdeb1018e0:18990B3518D2529C007A8756:name='SCXcodeSwitchExpander.m'>)>
-	 Yes, lazy, and I'm sorry but its 2am and importing XCode Header files is a pain in the ass :P
-	 */
 	NSString *fileReferenceStringBulk = [NSString stringWithFormat:@"%@",fileReference];
-	
 	self.isSwift = [fileReferenceStringBulk rangeOfString:@".swift"].location != NSNotFound;
 }
 
