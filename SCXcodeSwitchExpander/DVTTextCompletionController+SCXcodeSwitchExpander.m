@@ -109,6 +109,12 @@
                 return NO;
             }
 			
+			// Check if it's the opening bracket for the switch statement or something else
+			NSString *remainingText = [textView.string substringWithRange:NSMakeRange(switchRange.location + switchRange.length, openingBracketLocation - switchRange.location - switchRange.length)];
+			if([remainingText rangeOfString:@"}"].location != NSNotFound) {
+				return NO;
+			}
+			
 			// Insert the selected autocomplete item
 			[self.session insertCurrentCompletion];
 			
