@@ -38,7 +38,7 @@ SCXcodeSwitchExpander is a small Xcode plugin that expands switch statements by 
 
 - Download SCXcodeSwitchExpander.xcplugin.zip from the releases tab, unzip and move it to the  Xcode plugins folder ~/Library/Application Support/Developer/Shared/Xcode/Plug-ins/SCXcodeSwitchExpander.xcplugin and restart Xcode or ...
 
-- Get it through [Alcatraz](https://github.com/supermarin/Alcatraz)
+- Get it through [Alcatraz](https://github.com/alcatraz/Alcatraz)
 
 - If you encounter any issues you can uninstall it by removing the ~/Library/Application Support/Developer/Shared/Xcode/Plug-ins/SCXcodeSwitchExpander.xcplugin folder
  
