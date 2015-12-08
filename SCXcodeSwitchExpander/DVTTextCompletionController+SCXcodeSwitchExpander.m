@@ -167,16 +167,17 @@
 			switchContentRange = NSMakeRange(openingBracketLocation + 1, closingBracketLocation - openingBracketLocation - 1);
 			switchContent = [textView.string substringWithRange:switchContentRange];
 			
-            // Insert the default case if necessary
-            if([switchContent rangeOfString:@"default"].location == NSNotFound) {
-                if ([[SCXcodeSwitchExpander sharedSwitchExpander] isSwift]) {
-                    replacementString = [NSMutableString stringWithString:@"default: \nbreak\n\n"];
-                } else {
-                    replacementString = [NSMutableString stringWithString:@"default: {\nbreak;\n}\n"];
-                }
-                [textView insertText:replacementString replacementRange:NSMakeRange(switchContentRange.location + switchContentRange.length, 0)];
-                closingBracketLocation += replacementString.length;
-            }
+//          // Insert the default case if necessary
+//          if([switchContent rangeOfString:@"default"].location == NSNotFound) {
+//              if ([[SCXcodeSwitchExpander sharedSwitchExpander] isSwift]) {
+//                  replacementString = [NSMutableString stringWithString:@"default: \nbreak\n\n"];
+//              } else {
+//                  replacementString = [NSMutableString stringWithString:@"default: {\nbreak;\n}\n"];
+//              }
+//              [textView insertText:replacementString replacementRange:NSMakeRange(switchContentRange.location + switchContentRange.length, 0)];
+//              closingBracketLocation += replacementString.length;
+//          }
+            
             // Re-indent everything
 			NSRange reindentRange = NSMakeRange(openingBracketLocation, closingBracketLocation - openingBracketLocation + 2);
             [textView _indentInsertedTextIfNecessaryAtRange:reindentRange];
