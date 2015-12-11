@@ -146,7 +146,7 @@
             // Generate the items to insert and insert them at the end
             NSMutableString *replacementString = [NSMutableString string];
 			
-			if([switchContent stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]].length == 0) {
+			if([switchContent stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]].length == 0 && ![[SCXcodeSwitchExpander sharedSwitchExpander] isSwift]) {
 				[replacementString appendString:@"\n"];
 			}
 			
