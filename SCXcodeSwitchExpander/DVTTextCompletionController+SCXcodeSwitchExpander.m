@@ -154,7 +154,7 @@
                 if([switchContent rangeOfString:child.displayName].location == NSNotFound) {
                     if ([[SCXcodeSwitchExpander sharedSwitchExpander] isSwift]) {
                         NSString *childDisplayName = [self correctEnumConstantIfFromCocoa:[NSString stringWithFormat:@"%@",symbol] symbolName:symbolName cocoaEnumName:child.displayName];
-                        [replacementString appendString:[NSString stringWithFormat:@"case .%@: \n<#statement#>\nbreak\n\n", childDisplayName]];
+                        [replacementString appendString:[NSString stringWithFormat:@"case .%@: \n<#statement#>\n", childDisplayName]];
                     } else {
                         [replacementString appendString:[NSString stringWithFormat:@"case %@: {\n<#statement#>\nbreak;\n}\n", child.displayName]];
                     }
