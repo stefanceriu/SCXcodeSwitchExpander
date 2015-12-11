@@ -146,8 +146,21 @@
             // Generate the items to insert and insert them at the end
             NSMutableString *replacementString = [NSMutableString string];
 			
-			if([switchContent stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]].length == 0 && ![[SCXcodeSwitchExpander sharedSwitchExpander] isSwift]) {
-				[replacementString appendString:@"\n"];
+			NSString *trimmedContent = [switchContent stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+
+			if(trimmedContent.length == 0) {
+				// remove extraneous empty lines if existing content is only whitespace
+				if (switchContent.length > 0) {
+					[textView insertText:@"" replacementRange:switchContentRange];
+					closingBracketLocation -= switchContent.length;
+					switchContentRange.length = 0;
+					[replacementString appendString:@"\n"];
+				} else {
+					// keep Swift code compact
+					if (![[SCXcodeSwitchExpander sharedSwitchExpander] isSwift]) {
+						[replacementString appendString:@"\n"];
+					}
+				}
 			}
 			
             for(IDEIndexSymbol *child in [((IDEIndexContainerSymbol*)symbol).children allObjects]) {
