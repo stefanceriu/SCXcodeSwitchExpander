@@ -103,6 +103,9 @@
             if(switchRange.location == NSNotFound) {
                 return NO;
             }
+            
+            // Insert the selected autocomplete item
+            [self.session insertCurrentCompletion];
 			
             // Fetch the opening bracket for that switch statement
             NSUInteger openingBracketLocation = [textView.string rangeOfString:@"{" options:0 range:NSMakeRange(self.session.wordStartLocation, textView.string.length - self.session.wordStartLocation)].location;
@@ -115,9 +118,6 @@
 			if([remainingText rangeOfString:@"}"].location != NSNotFound) {
 				return NO;
 			}
-			
-			// Insert the selected autocomplete item
-			[self.session insertCurrentCompletion];
 			
 			NSRange selectedRange = textView.selectedRange;
 			
