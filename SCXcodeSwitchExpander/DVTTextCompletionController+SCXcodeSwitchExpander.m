@@ -26,6 +26,10 @@
 
 - (BOOL)tryExpandingSwitchStatement;
 
+- (NSArray<IDEIndexSymbol*>*)findSymbolsWithNames:(NSArray<NSString*>*)names fromCollection:(IDEIndexCollection*)collection;
+- (NSArray<IDEIndexSymbol*>*)_getSymbolsByName:(NSString*)name fromCollection:(IDEIndexCollection*)collection;
+- (NSArray<IDEIndexSymbol*>*)_getSymbolsByNames:(NSArray<NSString*>*)names fromCollection:(IDEIndexCollection*)collection;
+
 @end
 
 @implementation DVTTextCompletionController (SCXcodeSwitchExpander)
@@ -53,6 +57,65 @@
 
 @implementation DVTTextCompletionListWindowController (SCXcodeSwitchExpander)
 
+- (NSArray<IDEIndexSymbol*>*)_getSymbolsByName:(NSString*)name fromCollection:(IDEIndexCollection*)collection
+{
+    NSMutableArray<IDEIndexSymbol*> *results = [[NSMutableArray alloc] init];
+    
+    for (IDEIndexSymbol *symbol in collection)
+    {
+        if ([symbol.name isEqualToString:name])
+        {
+            [results addObject:symbol];
+        }
+    }
+    
+    return [results copy];
+}
+
+- (NSArray<IDEIndexSymbol*>*)_getSymbolsByNames:(NSArray<NSString*>*)names fromCollection:(IDEIndexCollection*)collection
+{
+    NSString* name = names.firstObject;
+    NSArray<NSString*> *subNames = [names subarrayWithRange:NSMakeRange(1, names.count - 1)];
+    
+    for (IDEIndexSymbol *symbol in collection)
+    {
+        if ([symbol.name isEqualToString:name] && [symbol isKindOfClass:[IDEIndexContainerSymbol class]])
+        {
+            NSArray<IDEIndexSymbol*>* symbols = [self findSymbolsWithNames:subNames fromCollection:[(IDEIndexContainerSymbol*)symbol children]];
+        
+            if (symbols.count > 0)
+            {
+                return symbols;
+            }
+        }
+    }
+    
+    return nil;
+}
+
+- (NSArray<IDEIndexSymbol*>*)findSymbolsWithNames:(NSArray<NSString*>*)names fromCollection:(IDEIndexCollection*)collection
+{
+    switch (names.count)
+    {
+        case 0:
+            return @[];
+            
+        case 1:
+            return [self _getSymbolsByName:names.firstObject fromCollection:collection];
+            
+        default:
+            return [self _getSymbolsByNames:names fromCollection:collection];
+    }
+}
+
+- (NSArray<IDEIndexSymbol*>*)getSymbolsByFullName:(NSString*)fullSymbolName fromIndex:(IDEIndex*)index
+{
+    NSArray<NSString*> *names = [fullSymbolName componentsSeparatedByString:@"."];
+    IDEIndexCollection *collection = [index allSymbolsMatchingName:names.firstObject kind:nil];
+
+    return [self findSymbolsWithNames:names fromCollection:collection];
+}
+
 - (BOOL)tryExpandingSwitchStatement
 {
     IDEIndex *index = [[SCXcodeSwitchExpander sharedSwitchExpander] index];
@@ -68,15 +131,17 @@
 	symbolName = [[symbolName componentsSeparatedByString:@"::"] lastObject]; // Remove C++ namespaces
 	symbolName = [[symbolName componentsSeparatedByCharactersInSet:[NSCharacterSet whitespaceCharacterSet]] lastObject]; // Remove enum keyword
 
-	IDEIndexCollection *collection = [index allSymbolsMatchingName:symbolName kind:nil];
+    NSArray<IDEIndexSymbol*> *symbols = [self getSymbolsByFullName:symbolName fromIndex:index];
 	
     // Find the first one of them that is a container
-    for(IDEIndexSymbol *symbol in collection.allObjects) {
+    for(IDEIndexSymbol *symbol in symbols) {
         
         DVTSourceCodeSymbolKind *symbolKind = symbol.symbolKind;
+        NSLog(@"%@ (Kind=%@)", symbol.description, symbol.symbolKind);
 		
         BOOL isSymbolKindEnum = NO;
         for(DVTSourceCodeSymbolKind  *conformingSymbol in symbolKind.allConformingSymbolKinds) {
+            NSLog(@"%@", conformingSymbol.identifier);
             isSymbolKindEnum = [self isSymbolKindEnum:conformingSymbol];
         }
         
