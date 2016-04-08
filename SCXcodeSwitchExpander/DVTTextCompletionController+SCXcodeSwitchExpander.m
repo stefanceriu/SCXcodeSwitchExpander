@@ -22,6 +22,78 @@
 
 #import <objc/objc-class.h>
 
+/// Returns symbol names from swift style full symbol name (e.g. from `Mirror.DisplayStyle` to `[Mirror, DisplayStyle]`).
+NSArray<NSString*>* symbolNamesFromFullSymbolName(NSString* fullSymbolName);
+
+/// Returns normalized symbol name for -[IDEIndex allSymbolsMatchingName:kind:].
+NSString* normalizedSymbolName(NSString* symbolName);
+
+/// Returns a symbol name removed swift generic parameter (e.g. `SomeType<T>` to `SomeType`).
+NSString* symbolNameRemovingGenericParameter(NSString* symbolName);
+
+/// Returns a symbol name replaced syntax suggered optional to formal type name type in Swift (e.g. `Int?` to `Optional).
+NSString* symbolNameReplacingOptionalName(NSString* symbolName);
+
+NSArray<NSString*>* symbolNamesFromFullSymbolName(NSString* fullSymbolName)
+{
+    NSMutableArray<NSString*> *names = [[fullSymbolName componentsSeparatedByString:@"."] mutableCopy];
+    
+    for (NSInteger nameIndex = 0; nameIndex != names.count; ++nameIndex)
+    {
+        names[nameIndex] = normalizedSymbolName(names[nameIndex]);
+    }
+    
+    return [names copy];
+}
+
+NSString* normalizedSymbolName(NSString* symbolName)
+{
+    NSString *result = symbolName;
+    
+    result = symbolNameRemovingGenericParameter(result);
+    result = symbolNameReplacingOptionalName(result);
+    
+    return result;
+}
+
+NSString* symbolNameRemovingGenericParameter(NSString* symbolName)
+{
+    if ([[SCXcodeSwitchExpander sharedSwitchExpander] isSwift])
+    {
+        return [symbolName stringByReplacingOccurrencesOfString:@"<[^>]+>$"
+                                               withString:@""
+                                                  options:NSRegularExpressionSearch
+                                                    range:NSMakeRange(0, symbolName.length)];
+    }
+    else
+    {
+        return symbolName;
+    }
+}
+
+NSString* symbolNameReplacingOptionalName(NSString* symbolName)
+{
+    if ([[SCXcodeSwitchExpander sharedSwitchExpander] isSwift])
+    {
+        if ([symbolName hasSuffix:@"?"])
+        {
+            return @"Optional";
+        }
+        else if ([symbolName hasSuffix:@"!"])
+        {
+            return @"ImplicitlyUnwrappedOptional";
+        }
+        else
+        {
+            return symbolName;
+        }
+    }
+    else
+    {
+        return symbolName;
+    }
+}
+
 @interface DVTTextCompletionListWindowController (SCXcodeSwitchExpander)
 
 - (BOOL)tryExpandingSwitchStatement;
@@ -29,6 +101,11 @@
 - (NSArray<IDEIndexSymbol*>*)findSymbolsWithNames:(NSArray<NSString*>*)names fromCollection:(IDEIndexCollection*)collection;
 - (NSArray<IDEIndexSymbol*>*)_getSymbolsByName:(NSString*)name fromCollection:(IDEIndexCollection*)collection;
 - (NSArray<IDEIndexSymbol*>*)_getSymbolsByNames:(NSArray<NSString*>*)names fromCollection:(IDEIndexCollection*)collection;
+
+- (BOOL)isSymbolKindEnum:(DVTSourceCodeSymbolKind *)symbol;
+
+/// Returns a boolean value whether `symbolKind` means a enum constant.
+- (BOOL)isSymbolKindEnumConstant:(DVTSourceCodeSymbolKind *)symbolKind;
 
 @end
 
@@ -110,7 +187,7 @@
 
 - (NSArray<IDEIndexSymbol*>*)getSymbolsByFullName:(NSString*)fullSymbolName fromIndex:(IDEIndex*)index
 {
-    NSArray<NSString*> *names = [fullSymbolName componentsSeparatedByString:@"."];
+    NSArray<NSString*> *names = symbolNamesFromFullSymbolName(fullSymbolName);
     IDEIndexCollection *collection = [index allSymbolsMatchingName:names.firstObject kind:nil];
 
     return [self findSymbolsWithNames:names fromCollection:collection];
@@ -137,11 +214,9 @@
     for(IDEIndexSymbol *symbol in symbols) {
         
         DVTSourceCodeSymbolKind *symbolKind = symbol.symbolKind;
-        NSLog(@"%@ (Kind=%@)", symbol.description, symbol.symbolKind);
 		
         BOOL isSymbolKindEnum = NO;
         for(DVTSourceCodeSymbolKind  *conformingSymbol in symbolKind.allConformingSymbolKinds) {
-            NSLog(@"%@", conformingSymbol.identifier);
             isSymbolKindEnum = [self isSymbolKindEnum:conformingSymbol];
         }
         
@@ -230,6 +305,13 @@
 			}
 			
             for(IDEIndexSymbol *child in [((IDEIndexContainerSymbol*)symbol).children allObjects]) {
+
+                // skip the `child` symbol if it is not a enum constant.
+                if (![self isSymbolKindEnumConstant:child.symbolKind])
+                {
+                    continue;
+                }
+                
                 if([switchContent rangeOfString:child.displayName].location == NSNotFound) {
                     if ([[SCXcodeSwitchExpander sharedSwitchExpander] isSwift]) {
                         NSString *childDisplayName = [self correctEnumConstantIfFromCocoa:[NSString stringWithFormat:@"%@",symbol] symbolName:symbolName cocoaEnumName:child.displayName];
@@ -285,6 +367,11 @@
 - (BOOL)isSymbolKindEnum:(DVTSourceCodeSymbolKind *)symbol
 {
 	return [symbol.identifier isEqualToString:@"Xcode.SourceCodeSymbolKind.Enum"];
+}
+
+- (BOOL)isSymbolKindEnumConstant:(DVTSourceCodeSymbolKind *)symbolKind
+{
+    return [symbolKind.identifier isEqualToString:@"Xcode.SourceCodeSymbolKind.EnumConstant"];
 }
 
 - (NSUInteger)matchingBracketLocationForOpeningBracketLocation:(NSUInteger)location inString:(NSString *)string
