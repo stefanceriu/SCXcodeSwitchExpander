@@ -98,10 +98,16 @@ NSString* symbolNameReplacingOptionalName(NSString* symbolName)
 
 - (BOOL)tryExpandingSwitchStatement;
 
+/// Returns symbols that found in top `collection` by names recursively.
 - (NSArray<IDEIndexSymbol*>*)findSymbolsWithNames:(NSArray<NSString*>*)names fromCollection:(IDEIndexCollection*)collection;
+
+/// Returns symbols named `name` in `collection`
 - (NSArray<IDEIndexSymbol*>*)_getSymbolsByName:(NSString*)name fromCollection:(IDEIndexCollection*)collection;
+
+/// Returns symbols named `name[0].name[1].name[2]...` in `collection` recursively.
 - (NSArray<IDEIndexSymbol*>*)_getSymbolsByNames:(NSArray<NSString*>*)names fromCollection:(IDEIndexCollection*)collection;
 
+/// Returns a boolean value whether `symbolKind` means a enum type.
 - (BOOL)isSymbolKindEnum:(DVTSourceCodeSymbolKind *)symbol;
 
 /// Returns a boolean value whether `symbolKind` means a enum constant.
