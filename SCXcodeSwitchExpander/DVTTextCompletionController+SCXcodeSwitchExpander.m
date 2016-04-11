@@ -26,6 +26,9 @@
 
 #import <objc/objc-class.h>
 
+/// Returns namespace name by symbol's resolution.
+NSString* namespaceFromResolutionOfSymbol(IDEIndexSymbol* symbol);
+
 /// Returns symbol names from swift style full symbol name (e.g. from `Mirror.DisplayStyle` to `[Mirror, DisplayStyle]`).
 NSArray<NSString*>* symbolNamesFromFullSymbolName(NSString* fullSymbolName, DVTSourceCodeLanguageKind language);
 
@@ -37,6 +40,14 @@ NSString* symbolNameRemovingGenericParameter(NSString* symbolName, DVTSourceCode
 
 /// Returns a symbol name replaced syntax suggered optional to formal type name type in Swift (e.g. `Int?` to `Optional).
 NSString* symbolNameReplacingOptionalName(NSString* symbolName, DVTSourceCodeLanguageKind language);
+
+
+NSString* namespaceFromResolutionOfSymbol(IDEIndexSymbol* symbol)
+{
+    NSString *resolution = symbol.resolution;
+    
+    return [resolution stringByReplacingOccurrencesOfString:@"^s:\\w+16" withString:@"" options:NSRegularExpressionSearch range:NSMakeRange(0, resolution.length)];
+}
 
 NSArray<NSString*>* symbolNamesFromFullSymbolName(NSString* fullSymbolName, DVTSourceCodeLanguageKind language)
 {
@@ -113,18 +124,6 @@ NSString* symbolNameReplacingOptionalName(NSString* symbolName, DVTSourceCodeLan
 
 - (BOOL)tryExpandingSwitchStatementForLanguage:(DVTSourceCodeLanguageKind)language;
 
-/// Returns symbols specified by `fullSymbolName` in Index.
-- (NSArray<IDEIndexSymbol*>*)getSymbolsByFullName:(NSString*)fullSymbolName forLanguage:(DVTSourceCodeLanguageKind)language fromIndex:(IDEIndex*)index;
-
-/// Returns symbols that found in top `collection` by names recursively.
-- (NSArray<IDEIndexSymbol*>*)findSymbolsWithNames:(NSArray<NSString*>*)names fromCollection:(IDEIndexCollection*)collection;
-
-/// Returns symbols named `name` in `collection`
-- (NSArray<IDEIndexSymbol*>*)_getSymbolsByName:(NSString*)name fromCollection:(IDEIndexCollection*)collection;
-
-/// Returns symbols named `name[0].name[1].name[2]...` in `collection` recursively.
-- (NSArray<IDEIndexSymbol*>*)_getSymbolsByNames:(NSArray<NSString*>*)names fromCollection:(IDEIndexCollection*)collection;
-
 /// Returns a boolean value whether `symbolKind` means a enum type.
 - (BOOL)isSymbolKindEnum:(DVTSourceCodeSymbolKind *)symbol;
 
@@ -167,63 +166,46 @@ NSString* symbolNameReplacingOptionalName(NSString* symbolName, DVTSourceCodeLan
 
 @implementation DVTTextCompletionListWindowController (SCXcodeSwitchExpander)
 
-- (NSArray<IDEIndexSymbol*>*)_getSymbolsByName:(NSString*)name fromCollection:(IDEIndexCollection*)collection
-{
-    NSMutableArray<IDEIndexSymbol*> *results = [[NSMutableArray alloc] init];
-    
-    for (IDEIndexSymbol *symbol in collection)
-    {
-        if ([symbol.name isEqualToString:name])
-        {
-            [results addObject:symbol];
-        }
-    }
-    
-    return [results copy];
-}
-
-- (NSArray<IDEIndexSymbol*>*)_getSymbolsByNames:(NSArray<NSString*>*)names fromCollection:(IDEIndexCollection*)collection
-{
-    NSString* name = names.firstObject;
-    NSArray<NSString*> *subNames = [names subarrayWithRange:NSMakeRange(1, names.count - 1)];
-    
-    for (IDEIndexSymbol *symbol in collection)
-    {
-        if ([symbol.name isEqualToString:name] && [symbol isKindOfClass:[IDEIndexContainerSymbol class]])
-        {
-            NSArray<IDEIndexSymbol*>* symbols = [self findSymbolsWithNames:subNames fromCollection:[(IDEIndexContainerSymbol*)symbol children]];
-        
-            if (symbols.count > 0)
-            {
-                return symbols;
-            }
-        }
-    }
-    
-    return nil;
-}
-
-- (NSArray<IDEIndexSymbol*>*)findSymbolsWithNames:(NSArray<NSString*>*)names fromCollection:(IDEIndexCollection*)collection
-{
-    switch (names.count)
-    {
-        case 0:
-            return @[];
-            
-        case 1:
-            return [self _getSymbolsByName:names.firstObject fromCollection:collection];
-            
-        default:
-            return [self _getSymbolsByNames:names fromCollection:collection];
-    }
-}
 
 - (NSArray<IDEIndexSymbol*>*)getSymbolsByFullName:(NSString*)fullSymbolName forLanguage:(DVTSourceCodeLanguageKind)language fromIndex:(IDEIndex*)index
 {
     NSArray<NSString*> *names = symbolNamesFromFullSymbolName(fullSymbolName, language);
-    IDEIndexCollection *collection = [index allSymbolsMatchingName:names.firstObject kind:nil];
+    NSString *lastName = names.lastObject;
+    
+    NSArray<IDEIndexSymbol*> *symbols = [[index allSymbolsMatchingName:lastName kind:nil] allObjects];
+    NSIndexSet *enumSymbolIndexes = [symbols indexesOfObjectsPassingTest:^BOOL(IDEIndexSymbol * _Nonnull symbol, NSUInteger idx, BOOL * _Nonnull stop) {
+        return [self isSymbolKindEnum:symbol.symbolKind];
+    }];
+    NSArray<IDEIndexSymbol*> *enumSymbols = [symbols objectsAtIndexes:enumSymbolIndexes];
 
-    return [self findSymbolsWithNames:names fromCollection:collection];
+    for (NSInteger nameIndex = names.count - 2; nameIndex != -1; ++nameIndex)
+    {
+        if (enumSymbols.count <= 1)
+        {
+            break;
+        }
+        
+        NSString *currentName = [names objectAtIndex:nameIndex];
+        NSArray<IDEIndexSymbol*> *currentSymbols = [[index allSymbolsMatchingName:currentName kind:nil] allObjects];
+        
+        NSIndexSet *validEnumSymbolIndexes = [enumSymbols indexesOfObjectsPassingTest:^BOOL(IDEIndexSymbol * _Nonnull enumSymbol, NSUInteger idx, BOOL * _Nonnull stop) {
+            NSString *enumSymbolNamespace = namespaceFromResolutionOfSymbol(enumSymbol);
+            for (IDEIndexSymbol *currentSymbol in currentSymbols)
+            {
+                NSString *currentSymbolNamespace = namespaceFromResolutionOfSymbol(currentSymbol);
+                if ([enumSymbolNamespace hasPrefix:currentSymbolNamespace])
+                {
+                    return true;
+                }
+            }
+            return false;
+        }];
+        
+        enumSymbols = [enumSymbols objectsAtIndexes:validEnumSymbolIndexes];
+    }
+    
+//    return [self findSymbolsWithNames:names fromCollection:collection];
+    return enumSymbols;
 }
 
 - (BOOL)tryExpandingSwitchStatementForLanguage:(DVTSourceCodeLanguageKind)language

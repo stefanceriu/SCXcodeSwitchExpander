@@ -10,6 +10,7 @@
 
 @interface IDEIndexSymbol : NSObject
 
+@property(readonly, nonatomic) NSString *resolution;
 @property(readonly, nonatomic) NSString *name;
 @property(readonly, nonatomic) DVTSourceCodeSymbolKind *symbolKind;
 
