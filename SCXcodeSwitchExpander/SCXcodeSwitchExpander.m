@@ -19,7 +19,8 @@ static SCXcodeSwitchExpander *sharedExpander = nil;
 @property (nonatomic, weak) NSDocument *editorDocument;
 @property (nonatomic, assign) NSTextView *editorTextView;
 
-//@property (nonatomic, weak) IDEIndex *index;
+/// This property is unavailable because index will be get from IDEWorkspace directly.
+@property (nonatomic, weak) IDEIndex *index NS_UNAVAILABLE;
 
 @end
 
@@ -44,42 +45,19 @@ static SCXcodeSwitchExpander *sharedExpander = nil;
 - (id)init
 {
 	if (self = [super init]) {
-		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(indexDidChange:) name:@"IDEIndexDidChangeNotification" object:nil];
-//		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(editorDidDidFinishSetup:) name:@"IDESourceCodeEditorDidFinishSetup" object:nil];
-//        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(any:) name:nil object:nil];
-//        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(any:) name:@"IDEIndexDidIndexWorkspaceNotification" object:nil];
 	}
 	
 	return self;
 }
 
-- (void)any:(NSNotification*)sender
+/// Remove this method because other (not current) editor's notification may be received.
+- (void)editorDidDidFinishSetup:(NSNotification *)sender NS_UNAVAILABLE
 {
-    NSLog(@"Received: %@ %@", sender, sender.object);
-//    self.index = sender.object;
 }
 
-//- (void)editorDidDidFinishSetup:(NSNotification *)sender
-//{
-//	IDEEditor * editor = sender.object;
-//	IDEFileTextSettings *fileSettings = editor.fileTextSettings;
-//	IDEFileReference *fileReference = fileSettings.fileReference;
-//	
-//    NSLog(@"DEBUG : File Reference = %@", fileReference);
-//	NSString *fileReferenceStringBulk = [NSString stringWithFormat:@"%@",fileReference];
-//	self.isSwift = [fileReferenceStringBulk rangeOfString:@".swift"].location != NSNotFound;
-//}
-
-- (void)indexDidChange:(NSNotification *)sender
+/// Remove this method because index will get from current workspace directly.
+- (void)indexDidChange:(NSNotification *)sender NS_UNAVAILABLE
 {
-//    NSLog(@"Index Did Change : %@", self.index);
-//	self.index = sender.object;
-}
-
-- (void)indexNeedsUpdate:(IDEIndex *)index
-{
-//    NSLog(@"DEBUG: Update Index");
-//    [[NSNotificationCenter defaultCenter] postNotificationName:SCXcodeSwitchExpanderIndexDidChangeNotification object:index];
 }
 
 - (IDEWorkspace *)currentWorkspace

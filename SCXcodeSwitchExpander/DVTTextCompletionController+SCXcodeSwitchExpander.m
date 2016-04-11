@@ -111,7 +111,6 @@ NSString* symbolNameReplacingOptionalName(NSString* symbolName, DVTSourceCodeLan
 
 @interface DVTTextCompletionListWindowController (SCXcodeSwitchExpander)
 
-
 - (BOOL)tryExpandingSwitchStatementForLanguage:(DVTSourceCodeLanguageKind)language;
 
 /// Returns symbols specified by `fullSymbolName` in Index.

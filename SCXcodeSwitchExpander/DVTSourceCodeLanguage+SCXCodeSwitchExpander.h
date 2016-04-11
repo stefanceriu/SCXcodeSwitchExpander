@@ -17,6 +17,7 @@ typedef NS_ENUM(NSInteger, DVTSourceCodeLanguageKind)
 
 @interface DVTSourceCodeLanguage (SCXCodeSwitchExpander)
 
+/// Returns a kind of language which this instance means.
 @property (readonly) DVTSourceCodeLanguageKind kind;
 
 @end

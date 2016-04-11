@@ -14,7 +14,6 @@
 		18A1B48118DDA742007CA06A /* IDEFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 18A1B48018DDA742007CA06A /* IDEFoundation.framework */; };
 		18ECEB5718D267A0005F6C59 /* DVTTextCompletionController+SCXcodeSwitchExpander.m in Sources */ = {isa = PBXBuildFile; fileRef = 18ECEB5618D267A0005F6C59 /* DVTTextCompletionController+SCXcodeSwitchExpander.m */; };
 		B18173D81CBB91E400995105 /* DVTSourceCodeLanguage+SCXCodeSwitchExpander.m in Sources */ = {isa = PBXBuildFile; fileRef = B18173D71CBB91E400995105 /* DVTSourceCodeLanguage+SCXCodeSwitchExpander.m */; };
-		B1F83C541CB908CF00843242 /* IDEWorkspace+SCXCodeSwitchExpander.m in Sources */ = {isa = PBXBuildFile; fileRef = B1F83C531CB908CF00843242 /* IDEWorkspace+SCXCodeSwitchExpander.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -47,8 +46,6 @@
 		B18173D71CBB91E400995105 /* DVTSourceCodeLanguage+SCXCodeSwitchExpander.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "DVTSourceCodeLanguage+SCXCodeSwitchExpander.m"; sourceTree = "<group>"; };
 		B18173D91CBB92C700995105 /* DVTSourceCodeLanguage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DVTSourceCodeLanguage.h; sourceTree = "<group>"; };
 		B18173DA1CBB958300995105 /* DVTTextStorage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DVTTextStorage.h; sourceTree = "<group>"; };
-		B1F83C521CB908CF00843242 /* IDEWorkspace+SCXCodeSwitchExpander.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "IDEWorkspace+SCXCodeSwitchExpander.h"; sourceTree = "<group>"; };
-		B1F83C531CB908CF00843242 /* IDEWorkspace+SCXCodeSwitchExpander.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "IDEWorkspace+SCXCodeSwitchExpander.m"; sourceTree = "<group>"; };
 		B1F83C551CB9090F00843242 /* IDEWorkspace.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IDEWorkspace.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -71,8 +68,8 @@
 			isa = PBXGroup;
 			children = (
 				0144D9921B06F9F00012D7A2 /* DVTCompletingTextView.h */,
-				0144D9971B06F9F00012D7A2 /* DVTSourceCodeSymbolKind.h */,
 				B18173D91CBB92C700995105 /* DVTSourceCodeLanguage.h */,
+				0144D9971B06F9F00012D7A2 /* DVTSourceCodeSymbolKind.h */,
 				0144D9991B06F9F00012D7A2 /* DVTSourceTextView.h */,
 				0144D99A1B06F9F00012D7A2 /* DVTTextCompletionController.h */,
 				0144D99B1B06F9F00012D7A2 /* DVTTextCompletionListWindowController.h */,
@@ -126,8 +123,6 @@
 				18990B3518D2529C007A8756 /* SCXcodeSwitchExpander.m */,
 				18ECEB5518D267A0005F6C59 /* DVTTextCompletionController+SCXcodeSwitchExpander.h */,
 				18ECEB5618D267A0005F6C59 /* DVTTextCompletionController+SCXcodeSwitchExpander.m */,
-				B1F83C521CB908CF00843242 /* IDEWorkspace+SCXCodeSwitchExpander.h */,
-				B1F83C531CB908CF00843242 /* IDEWorkspace+SCXCodeSwitchExpander.m */,
 				B18173D61CBB91E400995105 /* DVTSourceCodeLanguage+SCXCodeSwitchExpander.h */,
 				B18173D71CBB91E400995105 /* DVTSourceCodeLanguage+SCXCodeSwitchExpander.m */,
 				18142E1D18E89497006BD329 /* Xcode Headers */,
@@ -207,7 +202,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				18ECEB5718D267A0005F6C59 /* DVTTextCompletionController+SCXcodeSwitchExpander.m in Sources */,
-				B1F83C541CB908CF00843242 /* IDEWorkspace+SCXCodeSwitchExpander.m in Sources */,
 				18990B3618D2529C007A8756 /* SCXcodeSwitchExpander.m in Sources */,
 				B18173D81CBB91E400995105 /* DVTSourceCodeLanguage+SCXCodeSwitchExpander.m in Sources */,
 			);

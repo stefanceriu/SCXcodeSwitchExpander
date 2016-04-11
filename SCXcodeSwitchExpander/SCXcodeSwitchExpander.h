@@ -9,16 +9,17 @@
 @class IDEIndex;
 @class IDEWorkspace;
 
-//#define SCXcodeSwitchExpanderIndexDidChangeNotification @"SCXcodeSwitchExpanderIndexDidChangeNotification"
-
 @interface SCXcodeSwitchExpander : NSObject
 
 + (instancetype)sharedSwitchExpander;
 
-//@property (nonatomic, weak, readonly) IDEIndex *index;
-//@property (nonatomic, assign)  isSwift;
-@property(readonly) IDEWorkspace *currentWorkspace;
+/// This property is unavailable because index will be get from IDEWorkspace directly.
+@property (nonatomic, weak, readonly) IDEIndex *index NS_UNAVAILABLE;
 
-- (void)indexNeedsUpdate:(IDEIndex*)index;
+/// This property is unavailable because language will be get from IDEEditor directly.
+@property (nonatomic, assign) BOOL isSwift NS_UNAVAILABLE;
+
+/// Returns current workspace.
+@property(readonly) IDEWorkspace *currentWorkspace;
 
 @end
