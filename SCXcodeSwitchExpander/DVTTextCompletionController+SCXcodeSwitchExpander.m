@@ -204,7 +204,6 @@ NSString* symbolNameReplacingOptionalName(NSString* symbolName, DVTSourceCodeLan
         enumSymbols = [enumSymbols objectsAtIndexes:validEnumSymbolIndexes];
     }
     
-//    return [self findSymbolsWithNames:names fromCollection:collection];
     return enumSymbols;
 }
 
