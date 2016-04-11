@@ -10,93 +10,112 @@
 
 #import "SCXcodeSwitchExpander.h"
 
+#import "DVTSourceCodeLanguage+SCXcodeSwitchExpander.h"
 #import "DVTSourceTextView.h"
+#import "DVTTextStorage.h"
 
 #import "IDEIndex.h"
 #import "IDEIndexCollection.h"
 #import "IDEIndexCompletionItem.h"
 #import "IDEIndexContainerSymbol.h"
+#import "IDEWorkspace.h"
 #import "DVTSourceCodeSymbolKind.h"
+#import "DVTSourceTextView.h"
 
 #import "DVTTextCompletionSession.h"
 
 #import <objc/objc-class.h>
 
 /// Returns symbol names from swift style full symbol name (e.g. from `Mirror.DisplayStyle` to `[Mirror, DisplayStyle]`).
-NSArray<NSString*>* symbolNamesFromFullSymbolName(NSString* fullSymbolName);
+NSArray<NSString*>* symbolNamesFromFullSymbolName(NSString* fullSymbolName, DVTSourceCodeLanguageKind language);
 
 /// Returns normalized symbol name for -[IDEIndex allSymbolsMatchingName:kind:].
-NSString* normalizedSymbolName(NSString* symbolName);
+NSString* normalizedSymbolName(NSString* symbolName, DVTSourceCodeLanguageKind language);
 
 /// Returns a symbol name removed swift generic parameter (e.g. `SomeType<T>` to `SomeType`).
-NSString* symbolNameRemovingGenericParameter(NSString* symbolName);
+NSString* symbolNameRemovingGenericParameter(NSString* symbolName, DVTSourceCodeLanguageKind language);
 
 /// Returns a symbol name replaced syntax suggered optional to formal type name type in Swift (e.g. `Int?` to `Optional).
-NSString* symbolNameReplacingOptionalName(NSString* symbolName);
+NSString* symbolNameReplacingOptionalName(NSString* symbolName, DVTSourceCodeLanguageKind language);
 
-NSArray<NSString*>* symbolNamesFromFullSymbolName(NSString* fullSymbolName)
+NSArray<NSString*>* symbolNamesFromFullSymbolName(NSString* fullSymbolName, DVTSourceCodeLanguageKind language)
 {
     NSMutableArray<NSString*> *names = [[fullSymbolName componentsSeparatedByString:@"."] mutableCopy];
     
     for (NSInteger nameIndex = 0; nameIndex != names.count; ++nameIndex)
     {
-        names[nameIndex] = normalizedSymbolName(names[nameIndex]);
+        names[nameIndex] = normalizedSymbolName(names[nameIndex], language);
     }
     
     return [names copy];
 }
 
-NSString* normalizedSymbolName(NSString* symbolName)
+NSString* normalizedSymbolName(NSString* symbolName, DVTSourceCodeLanguageKind language)
 {
     NSString *result = symbolName;
     
-    result = symbolNameRemovingGenericParameter(result);
-    result = symbolNameReplacingOptionalName(result);
+    result = symbolNameRemovingGenericParameter(result, language);
+    result = symbolNameReplacingOptionalName(result, language);
     
     return result;
 }
 
-NSString* symbolNameRemovingGenericParameter(NSString* symbolName)
+NSString* symbolNameRemovingGenericParameter(NSString* symbolName, DVTSourceCodeLanguageKind language)
 {
-    if ([[SCXcodeSwitchExpander sharedSwitchExpander] isSwift])
+    switch (language)
     {
-        return [symbolName stringByReplacingOccurrencesOfString:@"<[^>]+>$"
-                                               withString:@""
-                                                  options:NSRegularExpressionSearch
-                                                    range:NSMakeRange(0, symbolName.length)];
-    }
-    else
-    {
-        return symbolName;
+        case DVTSourceCodeLanguageKindSwift:
+            return [symbolName stringByReplacingOccurrencesOfString:@"<[^>]+>$"
+                                                         withString:@""
+                                                            options:NSRegularExpressionSearch
+                                                              range:NSMakeRange(0, symbolName.length)];
+            
+        case DVTSourceCodeLanguageKindObjectiveC:
+        case DVTSourceCodeLanguageKindOthers:
+            return symbolName;
     }
 }
 
-NSString* symbolNameReplacingOptionalName(NSString* symbolName)
+NSString* symbolNameReplacingOptionalName(NSString* symbolName, DVTSourceCodeLanguageKind language)
 {
-    if ([[SCXcodeSwitchExpander sharedSwitchExpander] isSwift])
+    switch (language)
     {
-        if ([symbolName hasSuffix:@"?"])
+        case DVTSourceCodeLanguageKindSwift:
         {
-            return @"Optional";
+            if ([symbolName hasSuffix:@"?"])
+            {
+                return @"Optional";
+            }
+            else if ([symbolName hasSuffix:@"!"])
+            {
+                return @"ImplicitlyUnwrappedOptional";
+            }
+            else
+            {
+                return symbolName;
+            }
         }
-        else if ([symbolName hasSuffix:@"!"])
-        {
-            return @"ImplicitlyUnwrappedOptional";
-        }
-        else
-        {
+            
+        case DVTSourceCodeLanguageKindObjectiveC:
+        case DVTSourceCodeLanguageKindOthers:
             return symbolName;
-        }
-    }
-    else
-    {
-        return symbolName;
     }
 }
+
+@interface DVTTextCompletionController (SCXCodeSwitchExpander)
+
+/// Returns the kind of language in current editor.
+- (DVTSourceCodeLanguageKind)currentLanguage;
+
+@end
 
 @interface DVTTextCompletionListWindowController (SCXcodeSwitchExpander)
 
-- (BOOL)tryExpandingSwitchStatement;
+
+- (BOOL)tryExpandingSwitchStatementForLanguage:(DVTSourceCodeLanguageKind)language;
+
+/// Returns symbols specified by `fullSymbolName` in Index.
+- (NSArray<IDEIndexSymbol*>*)getSymbolsByFullName:(NSString*)fullSymbolName forLanguage:(DVTSourceCodeLanguageKind)language fromIndex:(IDEIndex*)index;
 
 /// Returns symbols that found in top `collection` by names recursively.
 - (NSArray<IDEIndexSymbol*>*)findSymbolsWithNames:(NSArray<NSString*>*)names fromCollection:(IDEIndexCollection*)collection;
@@ -129,11 +148,20 @@ NSString* symbolNameReplacingOptionalName(NSString* symbolName)
 
 - (BOOL)scSwizzledAcceptCurrentCompletion
 {
-	if([self.currentSession.listWindowController tryExpandingSwitchStatement]) {
+    if([self.currentSession.listWindowController tryExpandingSwitchStatementForLanguage:self.currentLanguage]) {
 		return YES;
 	}
 	
 	return [self scSwizzledAcceptCurrentCompletion];
+}
+
+- (DVTSourceCodeLanguageKind)currentLanguage
+{
+    DVTSourceTextView *textView = (DVTSourceTextView *)self.textView;
+    DVTTextStorage *textStorage = (DVTTextStorage *)textView.textStorage;
+    DVTSourceCodeLanguage *language = textStorage.language;
+    
+    return language.kind;
 }
 
 @end
@@ -191,17 +219,17 @@ NSString* symbolNameReplacingOptionalName(NSString* symbolName)
     }
 }
 
-- (NSArray<IDEIndexSymbol*>*)getSymbolsByFullName:(NSString*)fullSymbolName fromIndex:(IDEIndex*)index
+- (NSArray<IDEIndexSymbol*>*)getSymbolsByFullName:(NSString*)fullSymbolName forLanguage:(DVTSourceCodeLanguageKind)language fromIndex:(IDEIndex*)index
 {
-    NSArray<NSString*> *names = symbolNamesFromFullSymbolName(fullSymbolName);
+    NSArray<NSString*> *names = symbolNamesFromFullSymbolName(fullSymbolName, language);
     IDEIndexCollection *collection = [index allSymbolsMatchingName:names.firstObject kind:nil];
 
     return [self findSymbolsWithNames:names fromCollection:collection];
 }
 
-- (BOOL)tryExpandingSwitchStatement
+- (BOOL)tryExpandingSwitchStatementForLanguage:(DVTSourceCodeLanguageKind)language
 {
-    IDEIndex *index = [[SCXcodeSwitchExpander sharedSwitchExpander] index];
+    IDEIndex *index = [[[SCXcodeSwitchExpander sharedSwitchExpander] currentWorkspace] index];
     
     if(index == nil) {
         return NO;
@@ -214,7 +242,7 @@ NSString* symbolNameReplacingOptionalName(NSString* symbolName)
 	symbolName = [[symbolName componentsSeparatedByString:@"::"] lastObject]; // Remove C++ namespaces
 	symbolName = [[symbolName componentsSeparatedByCharactersInSet:[NSCharacterSet whitespaceCharacterSet]] lastObject]; // Remove enum keyword
 
-    NSArray<IDEIndexSymbol*> *symbols = [self getSymbolsByFullName:symbolName fromIndex:index];
+    NSArray<IDEIndexSymbol*> *symbols = [self getSymbolsByFullName:symbolName forLanguage:language fromIndex:index];
 	
     // Find the first one of them that is a container
     for(IDEIndexSymbol *symbol in symbols) {
@@ -244,8 +272,21 @@ NSString* symbolNameReplacingOptionalName(NSString* symbolName)
             }
             
             // See if the current line has a switch statement
-			NSString *regPattern = [[SCXcodeSwitchExpander sharedSwitchExpander] isSwift] ? @"\\s+switch\\s*" : @"\\s+switch\\s*\\\(";
-			NSRange switchRange = [textView.string rangeOfString:regPattern options:NSRegularExpressionSearch range:NSMakeRange(newLineRange.location, self.session.wordStartLocation - newLineRange.location)];
+            NSString *regPattern;
+            
+            switch (language)
+            {
+                case DVTSourceCodeLanguageKindObjectiveC:
+                case DVTSourceCodeLanguageKindOthers:
+                    regPattern = @"\\s+switch\\s*\\\(";
+                    break;
+
+                case DVTSourceCodeLanguageKindSwift:
+                    regPattern = @"\\s+switch\\s*";
+                    break;
+            }
+
+            NSRange switchRange = [textView.string rangeOfString:regPattern options:NSRegularExpressionSearch range:NSMakeRange(newLineRange.location, self.session.wordStartLocation - newLineRange.location)];
             if(switchRange.location == NSNotFound) {
                 return NO;
             }
@@ -276,10 +317,16 @@ NSString* symbolNameReplacingOptionalName(NSString* symbolName)
 			
             NSRange defaultAutocompletionRange;
             // Get rid of the default autocompletion if necessary
-            if ([[SCXcodeSwitchExpander sharedSwitchExpander] isSwift]) {
-                defaultAutocompletionRange = [textView.string rangeOfString:@"\\s*case .<#constant#>:\\s*<#statements#>\\s*break\\s*default:\\s*break\\s*" options:NSRegularExpressionSearch range:NSMakeRange(openingBracketLocation, closingBracketLocation - openingBracketLocation)];
-            } else {
-                defaultAutocompletionRange = [textView.string rangeOfString:@"\\s*case <#constant#>:\\s*<#statements#>\\s*break;\\s*default:\\s*break;\\s*" options:NSRegularExpressionSearch range:NSMakeRange(openingBracketLocation, closingBracketLocation - openingBracketLocation)];
+            switch (language) {
+                    
+                case DVTSourceCodeLanguageKindSwift:
+                    defaultAutocompletionRange = [textView.string rangeOfString:@"\\s*case .<#constant#>:\\s*<#statements#>\\s*break\\s*default:\\s*break\\s*" options:NSRegularExpressionSearch range:NSMakeRange(openingBracketLocation, closingBracketLocation - openingBracketLocation)];
+                    break;
+                    
+                case DVTSourceCodeLanguageKindObjectiveC:
+                case DVTSourceCodeLanguageKindOthers:
+                    defaultAutocompletionRange = [textView.string rangeOfString:@"\\s*case <#constant#>:\\s*<#statements#>\\s*break;\\s*default:\\s*break;\\s*" options:NSRegularExpressionSearch range:NSMakeRange(openingBracketLocation, closingBracketLocation - openingBracketLocation)];
+                    break;
             }
 			
             if(defaultAutocompletionRange.location != NSNotFound) {
@@ -304,7 +351,7 @@ NSString* symbolNameReplacingOptionalName(NSString* symbolName)
 					[replacementString appendString:@"\n"];
 				} else {
 					// keep Swift code compact
-					if (![[SCXcodeSwitchExpander sharedSwitchExpander] isSwift]) {
+					if (language != DVTSourceCodeLanguageKindSwift) {
 						[replacementString appendString:@"\n"];
 					}
 				}
@@ -319,11 +366,19 @@ NSString* symbolNameReplacingOptionalName(NSString* symbolName)
                 }
                 
                 if([switchContent rangeOfString:child.displayName].location == NSNotFound) {
-                    if ([[SCXcodeSwitchExpander sharedSwitchExpander] isSwift]) {
-                        NSString *childDisplayName = [self correctEnumConstantIfFromCocoa:[NSString stringWithFormat:@"%@",symbol] symbolName:symbolName cocoaEnumName:child.displayName];
-                        [replacementString appendString:[NSString stringWithFormat:@"case .%@: \n<#statement#>\n", childDisplayName]];
-                    } else {
-                        [replacementString appendString:[NSString stringWithFormat:@"case %@: {\n<#statement#>\nbreak;\n}\n", child.displayName]];
+                    switch (language) {
+                            
+                        case DVTSourceCodeLanguageKindSwift:
+                        {
+                            NSString *childDisplayName = [self correctEnumConstantIfFromCocoa:[NSString stringWithFormat:@"%@",symbol] symbolName:symbolName cocoaEnumName:child.displayName];
+                            [replacementString appendString:[NSString stringWithFormat:@"case .%@: \n<#statement#>\n", childDisplayName]];
+                            break;
+                        }
+                            
+                        case DVTSourceCodeLanguageKindObjectiveC:
+                        case DVTSourceCodeLanguageKindOthers:
+                            [replacementString appendString:[NSString stringWithFormat:@"case %@: {\n<#statement#>\nbreak;\n}\n", child.displayName]];
+                            break;
                     }
                 }
             }
