@@ -9,8 +9,11 @@
 #import "SCXcodeSwitchExpander.h"
 #import "IDEIndex.h"
 #import "IDEEditor.h"
+#import "IDEEditorArea.h"
+#import "IDEEditorContext.h"
 #import "IDEFileTextSettings.h"
 #import "IDEWorkspace.h"
+#import "IDEWorkspaceWindowController.h"
 
 static SCXcodeSwitchExpander *sharedExpander = nil;
 
@@ -63,8 +66,8 @@ static SCXcodeSwitchExpander *sharedExpander = nil;
 - (IDEWorkspace *)currentWorkspace
 {
     NSWindowController *currentWindowController = [[NSApp keyWindow] windowController];
-    if ([currentWindowController isKindOfClass:NSClassFromString(@"IDEWorkspaceWindowController")]) {
-        return [currentWindowController valueForKey:@"_workspace"];
+    if ([currentWindowController isKindOfClass:[IDEWorkspaceWindowController class]]) {
+        return [(IDEWorkspaceWindowController*)currentWindowController editorArea].lastActiveEditorContext.workspace;
     }
     else {
         return nil;

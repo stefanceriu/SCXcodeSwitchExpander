@@ -11,6 +11,7 @@
 
 @interface DVTTextCompletionSession : NSObject
 
+@property(readonly, nonatomic) NSDictionary *currentCompletionContext;
 @property(readonly) unsigned long long wordStartLocation;
 @property(readonly) DVTTextCompletionListWindowController *listWindowController;
 @property(readonly) DVTCompletingTextView *textView;

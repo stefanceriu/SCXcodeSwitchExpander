@@ -19,7 +19,4 @@
 /// This property is unavailable because language will be get from IDEEditor directly.
 @property (nonatomic, assign) BOOL isSwift NS_UNAVAILABLE;
 
-/// Returns current workspace.
-@property(readonly) IDEWorkspace *currentWorkspace;
-
 @end

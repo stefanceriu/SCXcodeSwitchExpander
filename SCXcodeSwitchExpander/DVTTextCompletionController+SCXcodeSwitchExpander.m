@@ -22,7 +22,7 @@
 #import "DVTSourceCodeSymbolKind.h"
 #import "DVTSourceTextView.h"
 
-#import "DVTTextCompletionSession.h"
+#import "DVTTextCompletionSession+SCXcodeSwitchExpander.h"
 
 #import <objc/objc-class.h>
 
@@ -159,7 +159,7 @@ NSString* symbolNameReplacingOptionalName(NSString* symbolName, DVTSourceCodeLan
     DVTSourceTextView *textView = (DVTSourceTextView *)self.textView;
     DVTTextStorage *textStorage = (DVTTextStorage *)textView.textStorage;
     DVTSourceCodeLanguage *language = textStorage.language;
-    
+
     return language.kind;
 }
 
@@ -228,7 +228,8 @@ NSString* symbolNameReplacingOptionalName(NSString* symbolName, DVTSourceCodeLan
 
 - (BOOL)tryExpandingSwitchStatementForLanguage:(DVTSourceCodeLanguageKind)language
 {
-    IDEIndex *index = [[[SCXcodeSwitchExpander sharedSwitchExpander] currentWorkspace] index];
+    IDEWorkspace *workspace = self.session.currentWorkspace;
+    IDEIndex *index = workspace.index;
     
     if(index == nil) {
         return NO;
