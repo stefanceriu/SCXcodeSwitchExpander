@@ -9,11 +9,8 @@
 #import "SCXcodeSwitchExpander.h"
 #import "IDEIndex.h"
 #import "IDEEditor.h"
-#import "IDEEditorArea.h"
-#import "IDEEditorContext.h"
 #import "IDEFileTextSettings.h"
 #import "IDEWorkspace.h"
-#import "IDEWorkspaceWindowController.h"
 
 static SCXcodeSwitchExpander *sharedExpander = nil;
 
@@ -61,17 +58,6 @@ static SCXcodeSwitchExpander *sharedExpander = nil;
 /// Remove this method because index will get from current workspace directly.
 - (void)indexDidChange:(NSNotification *)sender NS_UNAVAILABLE
 {
-}
-
-- (IDEWorkspace *)currentWorkspace
-{
-    NSWindowController *currentWindowController = [[NSApp keyWindow] windowController];
-    if ([currentWindowController isKindOfClass:[IDEWorkspaceWindowController class]]) {
-        return [(IDEWorkspaceWindowController*)currentWindowController editorArea].lastActiveEditorContext.workspace;
-    }
-    else {
-        return nil;
-    }
 }
 
 @end
