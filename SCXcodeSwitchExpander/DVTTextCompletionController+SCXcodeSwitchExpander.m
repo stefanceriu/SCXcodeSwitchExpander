@@ -221,7 +221,8 @@ NSString* symbolNameReplacingOptionalName(NSString* symbolName, DVTSourceCodeLan
     // Fetch all symbols matching the autocomplete item type
 	NSString *symbolName = (item.displayType.length ? item.displayType : item.displayText);
 	symbolName = [[symbolName componentsSeparatedByString:@"::"] lastObject]; // Remove C++ namespaces
-	symbolName = [[symbolName componentsSeparatedByCharactersInSet:[NSCharacterSet whitespaceCharacterSet]] lastObject]; // Remove enum keyword
+	symbolName = [symbolName stringByReplacingOccurrencesOfString:@"^enum\\s+" withString:@"" options:NSRegularExpressionSearch range:NSMakeRange(0, symbolName.length)]; // Remove enum keyword
+    symbolName = [symbolName stringByReplacingOccurrencesOfString:@"^\\((.*)\\)$" withString:@"$1" options:NSRegularExpressionSearch range: NSMakeRange(0, symbolName.length)]; // Remove Swift tuple (e.g. `(SomeClass.Result<T, E>)` to `SomeClass.Result<T, E>`). This occurs at the closure passed only single enum argument.
 
     NSArray<IDEIndexSymbol*> *symbols = [self getSymbolsByFullName:symbolName forLanguage:language fromIndex:index];
 	
