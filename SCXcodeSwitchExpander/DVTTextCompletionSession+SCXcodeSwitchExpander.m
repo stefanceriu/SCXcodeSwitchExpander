@@ -11,7 +11,7 @@
 
 @implementation DVTTextCompletionSession (SCXcodeSwitchExpander)
 
-- (IDEWorkspace*)currentWorkspace
+- (IDEWorkspace *)switchExpander_currentWorkspace
 {
     return [self.currentCompletionContext valueForKey:@"IDETextCompletionContextWorkspaceKey"];
 }

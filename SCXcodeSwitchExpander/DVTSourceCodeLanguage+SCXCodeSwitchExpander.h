@@ -8,16 +8,14 @@
 
 #import "DVTSourceCodeLanguage.h"
 
-typedef NS_ENUM(NSInteger, DVTSourceCodeLanguageKind)
-{
+typedef NS_ENUM(NSInteger, DVTSourceCodeLanguageKind) {
+    DVTSourceCodeLanguageKindOther,
     DVTSourceCodeLanguageKindObjectiveC,
-    DVTSourceCodeLanguageKindSwift,
-    DVTSourceCodeLanguageKindOthers
+    DVTSourceCodeLanguageKindSwift
 };
 
 @interface DVTSourceCodeLanguage (SCXCodeSwitchExpander)
 
-/// Returns a kind of language which this instance means.
-@property (readonly) DVTSourceCodeLanguageKind kind;
+@property (readonly) DVTSourceCodeLanguageKind switchExpander_sourceCodeLanguageKind;
 
 @end

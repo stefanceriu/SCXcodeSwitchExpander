@@ -10,20 +10,16 @@
 
 @implementation DVTSourceCodeLanguage (SCXCodeSwitchExpander)
 
-- (DVTSourceCodeLanguageKind)kind
+- (DVTSourceCodeLanguageKind)switchExpander_sourceCodeLanguageKind
 {
-    if ([self.languageName isEqualToString:@"Objective-C"])
-    {
+    if ([self.languageName isEqualToString:@"Objective-C"]) {
         return DVTSourceCodeLanguageKindObjectiveC;
     }
-    else if ([self.languageName isEqualToString:@"Swift"])
-    {
+    else if ([self.languageName isEqualToString:@"Swift"]) {
         return DVTSourceCodeLanguageKindSwift;
     }
-    else
-    {
-        return DVTSourceCodeLanguageKindOthers;
-    }
+
+    return DVTSourceCodeLanguageKindOther;
 }
 
 @end

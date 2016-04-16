@@ -12,7 +12,6 @@
 
 @interface DVTTextCompletionSession (SCXcodeSwitchExpander)
 
-/// Returns the workspace of the session.
-@property (readonly) IDEWorkspace *currentWorkspace;
+@property (readonly) IDEWorkspace *switchExpander_currentWorkspace;
 
 @end
