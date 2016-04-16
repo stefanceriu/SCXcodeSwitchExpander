@@ -6,7 +6,7 @@
 //  Copyright (c) 2014 Stefan Ceriu. All rights reserved.
 //
 
-@interface IDEIndexCollection : NSObject
+@interface IDEIndexCollection : NSObject <NSFastEnumeration>
 
 - (id)allObjects;
 

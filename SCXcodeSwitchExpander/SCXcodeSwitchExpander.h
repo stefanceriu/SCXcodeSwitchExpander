@@ -7,12 +7,16 @@
 //
 
 @class IDEIndex;
+@class IDEWorkspace;
 
 @interface SCXcodeSwitchExpander : NSObject
 
 + (instancetype)sharedSwitchExpander;
 
-@property (nonatomic, weak, readonly) IDEIndex *index;
-@property (nonatomic, assign) BOOL isSwift;
+/// This property is unavailable because index will be get from IDEWorkspace directly.
+@property (nonatomic, weak, readonly) IDEIndex *index NS_UNAVAILABLE;
+
+/// This property is unavailable because language will be get from IDEEditor directly.
+@property (nonatomic, assign) BOOL isSwift NS_UNAVAILABLE;
 
 @end
