@@ -321,7 +321,7 @@
     }];
     NSArray<IDEIndexSymbol*> *enumSymbols = [symbols objectsAtIndexes:enumSymbolIndexes];
     
-    for (NSInteger nameIndex = names.count - 2; nameIndex != -1; ++nameIndex) {
+    for (NSInteger nameIndex = names.count - 2; nameIndex != -1; --nameIndex) {
         if (enumSymbols.count <= 1) {
             break;
         }
