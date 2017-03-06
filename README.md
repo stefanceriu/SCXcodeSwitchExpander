@@ -21,10 +21,10 @@ SCXcodeSwitchExpander is a small Xcode plugin that expands switch statements by 
 ### Screenshots
 
 - Replacing the default Xcode snippet
-![DefaultSnippet](https://dl.dropboxusercontent.com/u/12748201/SCXcodeSwitchExpander/SCXcodeSwitchExpander1.gif)
+![DefaultSnippet](https://drive.google.com/uc?export=download&id=0ByLCkUO90ltoMEVfNjVLdHg5UXM)
 
 - Inserting missing cases
-![MissingInsertion](https://dl.dropboxusercontent.com/u/12748201/SCXcodeSwitchExpander/SCXcodeSwitchExpander2.gif)
+![MissingInsertion](https://drive.google.com/uc?export=download&id=0ByLCkUO90ltoV3hJQjhCamdtdXM)
 
 ### Known Issues
 
