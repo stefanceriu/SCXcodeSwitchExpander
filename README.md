@@ -43,7 +43,7 @@ SCXcodeSwitchExpander is a small Xcode plugin that expands switch statements by 
 - If you encounter any issues you can uninstall it by removing the ~/Library/Application Support/Developer/Shared/Xcode/Plug-ins/SCXcodeSwitchExpander.xcplugin folder
  
 ### Contact
-Any suggestions or improvements are more than welcome. Feel free to contact me at [stefan.ceriu@yahoo.com](mailto:stefan.ceriu@yahoo.com) or [@stefanceriu](https://twitter.com/stefanceriu).
+Any suggestions or improvements are more than welcome. Feel free to contact me at [stefan.ceriu@gmail.com](mailto:stefan.ceriu@yahoo.com) or [@stefanceriu](https://twitter.com/stefanceriu).
 
 
 ### License
